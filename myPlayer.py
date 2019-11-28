@@ -12,25 +12,77 @@ class myPlayer(PlayerInterface):
         self._mycolor = None
 
     def getPlayerName(self):
-        return "Random Player"
+        return "Saucisse"
+
+    def getresult(self,color):
+    
+        if self._mycolor == color:
+            return 1
+        else:
+            return -1
+
+    def getresult(self,color):
+        if self._mycolor == color:
+            return 1
+        else:
+            return -1
+    
+    def maxValue(self, alpha, beta,color,depth):
+        if self._board.is_game_over() or depth == 0:
+            res = self._board.heuristique()
+            #res = self.getresult(color)
+            return res
+
+
+        for i in self._board.legal_moves():
+            #print("i de maxvalue = ",i)
+            self._board.push(i)
+            alpha = max(alpha, self.minValue(alpha, beta, color,depth - 1))
+            self._board.pop()
+            if alpha >= beta:
+                return beta
+
+        return alpha
+
+    def minValue(self, alpha, beta,color,depth):
+        if self._board.is_game_over() or depth == 0:
+            res = self._board.heuristique()
+            #res = self.getresult(color)
+            return res
+
+        for i in self._board.legal_moves():
+            #print("i de minvalue = ",i)
+            self._board.push(i)
+            beta = min(beta, self.maxValue(alpha, beta,color,depth - 1))
+            self._board.pop()
+            if alpha >= beta:
+                return alpha
+        
+        return beta
 
     def getPlayerMove(self):
-        if self._board.is_game_over():
-            print("Referee told me to play but the game is over!")
-            return (-1,-1)
-        moves = [m for m in self._board.legal_moves()]
-        move = moves[randint(0,len(moves)-1)]
-        self._board.push(move)
-        print("I am playing ", move)
-        (c,x,y) = move
-        assert(c==self._mycolor)
-        print("My current board :")
-        print(self._board)
-        return (x,y) 
+        
+        better = -1
+        tmp = []
 
+        for move in self._board.legal_moves():
+            self._board.push(move)
+            res = self.minValue(-100, 100,self._mycolor,3)
+            self._board.pop()
+            (c,x,y) = move
+            if res > 0:
+                return (x,y)
+            elif res <= 0:
+                if len(tmp) == 0:
+                    tmp = (x,y)
+            elif res == 0 and better -1:
+                better = 0
+                tmp = (x,y)
+
+        return  tmp
+
+    
     def playOpponentMove(self, x,y):
-        assert(self._board.is_valid_move(self._opponent, x, y))
-        print("Opponent played ", (x,y))
         self._board.push([self._opponent, x, y])
 
     def newGame(self, color):
