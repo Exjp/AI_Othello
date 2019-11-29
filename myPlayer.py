@@ -62,7 +62,7 @@ class myPlayer(PlayerInterface):
 
         for move in self._board.legal_moves():
             self._board.push(move)
-            res = self.minValue(-100, 100,self._mycolor,3)
+            res = self.minValue(-100, 100,color,3)
             self._board.pop()
             if res > 0:
                 return move
