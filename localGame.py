@@ -1,3 +1,7 @@
+from DisplayBoard import *
+import pygame
+from pygame.locals import *
+
 import Reversi
 import myPlayer
 import time
@@ -22,11 +26,11 @@ nbmoves = 1
 outputs = ["",""]
 sysstdout= sys.stdout
 stringio = StringIO()
-
 print(b.legal_moves())
 while not b.is_game_over():
     print("Referee Board:")
-    print(b)
+    #print(b)
+    displayBoard()
     print("Before move", nbmoves)
     print("Legal Moves: ", b.legal_moves())
     nbmoves += 1
@@ -43,18 +47,19 @@ while not b.is_game_over():
     outputs[nextplayer] += playeroutput
     totalTime[nextplayer] += time.time() - currentTime
     print("Player ", nextplayercolor, players[nextplayer].getPlayerName(), "plays" + str(move))
-    (x,y) = move 
+    (x,y) = move
     if not b.is_valid_move(nextplayercolor,x,y):
         print(otherplayer, nextplayer, nextplayercolor)
         print("Problem: illegal move")
         break
+    addPiece(y,x,nextplayercolor)
     b.push([nextplayercolor, x, y])
     players[otherplayer].playOpponentMove(x,y)
 
     nextplayer = otherplayer
     nextplayercolor = othercolor
 
-    print(b)
+    #print(b)
 
 print("The game is over")
 print(b)

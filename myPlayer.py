@@ -24,12 +24,10 @@ class myPlayer(PlayerInterface):
     def maxValue(self, alpha, beta,color,depth):
         if self._board.is_game_over() or depth == 0:
             res = self._board.heuristique()
-            #res = self.getresult(color)
             return res
 
 
         for i in self._board.legal_moves():
-            #print("i de maxvalue = ",i)
             self._board.push(i)
             alpha = max(alpha, self.minValue(alpha, beta, color,depth - 1))
             self._board.pop()
@@ -41,11 +39,9 @@ class myPlayer(PlayerInterface):
     def minValue(self, alpha, beta,color,depth):
         if self._board.is_game_over() or depth == 0:
             res = self._board.heuristique()
-            #res = self.getresult(color)
             return res
 
         for i in self._board.legal_moves():
-            #print("i de minvalue = ",i)
             self._board.push(i)
             beta = min(beta, self.maxValue(alpha, beta,color,depth - 1))
             self._board.pop()
@@ -54,15 +50,13 @@ class myPlayer(PlayerInterface):
         
         return beta
 
-#    def sendMove(self,x,y):
-#        return()
     def alphabeta(self,color):
         better = -1
         tmp = []
 
         for move in self._board.legal_moves():
             self._board.push(move)
-            res = self.minValue(-100, 100,color,3)
+            res = self.minValue(-2, 2,color,4)
             self._board.pop()
             if res > 0:
                 return move
@@ -90,7 +84,7 @@ class myPlayer(PlayerInterface):
         (c,x,y) = move
         assert(c==self._mycolor)
         print("My current board :")
-        print(self._board)
+        #print(self._board)
         return (x,y) 
 
     
