@@ -10,7 +10,7 @@ background = background.convert()
 background.fill((100, 100, 100))
 
 
-def displayBoard():
+def displayBoard(b):
     radius = 50
 
     pygame.init()
@@ -19,20 +19,20 @@ def displayBoard():
     for i in range(1,10): 
         pygame.draw.aalines(background, (0, 0, 0), False, [(0, 100*i), (1000,100*i)],500)
         pygame.draw.aalines(background, (0, 0, 0), False, [(100*i, 0), (100*i,10000)],500)
+    for x in range(b._boardsize):
+        for y in range(b._boardsize):
+            addPiece(x,y,b._board[y][x])
     
-    pygame.draw.circle(background, (0, 0, 0), (450, 450), radius)
-    pygame.draw.circle(background, (0, 0, 0), (550, 550), radius)
-    pygame.draw.circle(background, (255, 255, 255), (450, 550), radius)  
-    pygame.draw.circle(background, (255, 255, 255), (550, 450), radius)
-
+    
 
     # Blitter le tout dans la fenêtre
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
 def addPiece(X,Y,color):
+    if color is 0:
+        return
     radius = 50
-    
     if(color == 1):
         pygame.draw.circle(background, (0, 0, 0), (50 + (X*100), 50 + (Y*100)), radius)
     if(color == 2):

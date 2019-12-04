@@ -30,7 +30,7 @@ print(b.legal_moves())
 while not b.is_game_over():
     print("Referee Board:")
     #print(b)
-    displayBoard()
+    displayBoard(b)
     print("Before move", nbmoves)
     print("Legal Moves: ", b.legal_moves())
     nbmoves += 1
@@ -52,14 +52,14 @@ while not b.is_game_over():
         print(otherplayer, nextplayer, nextplayercolor)
         print("Problem: illegal move")
         break
-    addPiece(y,x,nextplayercolor)
+    #addPiece(y,x,nextplayercolor)
     b.push([nextplayercolor, x, y])
     players[otherplayer].playOpponentMove(x,y)
 
     nextplayer = otherplayer
     nextplayercolor = othercolor
-
-    #print(b)
+    time.sleep(1)
+    print(b)
 
 print("The game is over")
 print(b)

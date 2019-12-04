@@ -204,9 +204,18 @@ class Board:
     def heuristique(self, player=None):
         if player is None:
             player = self._nextPlayer
+        corners = 0
+        for x in range(2):
+            for y in range(2):
+                if self._board[x*(self._boardsize-1)][y*(self._boardsize-1)] is self._WHITE:
+                    corners -= 500
+                    print("corner "+str(x)+" "+str(y)+" can be white")
+                elif self._board[x*(self._boardsize-1)][y*(self._boardsize-1)] is self._BLACK:
+                    corners+= 500
+                    print("corner "+str(x)+" "+str(y)+" can be black")
         if player is self._WHITE:
-            return self._nbWHITE - self._nbBLACK
-        return self._nbBLACK - self._nbWHITE
+            return self._nbWHITE - self._nbBLACK - corners 
+        return self._nbBLACK - self._nbWHITE + corners
 
     def _piece2str(self, c):
         if c==self._WHITE:

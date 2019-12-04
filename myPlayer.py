@@ -73,7 +73,7 @@ class myPlayer(PlayerInterface):
     def getPlayerMove(self):
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
-            return (-1,-1);
+            return (-1,-1)
         if self._mycolor == self._board._BLACK:
             move = self.alphabeta(self._mycolor)
         elif self._mycolor == self._board._WHITE:
@@ -85,6 +85,7 @@ class myPlayer(PlayerInterface):
         assert(c==self._mycolor)
         print("My current board :")
         #print(self._board)
+        #time.sleep(2)
         return (x,y) 
 
     
