@@ -121,7 +121,7 @@ class myPlayer(PlayerInterface):
 
     def maxValue(self, alpha, beta,color,depth,seconds):
         if self._board.is_game_over() or depth == 0 or (time.time() - seconds >= 5):
-            res = self._board.heuristique()
+            res = self.heuristique()
             return res
 
         if not self._board.legal_moves():
