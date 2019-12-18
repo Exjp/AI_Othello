@@ -202,25 +202,33 @@ class Board:
 
     #approche 1: simplement retourner le nombre de jeton
     def end_heuristique1(self, player=None):
-        if player is None:
-            player = self._nextPlayer
-        if player is self._WHITE:
-            return self._nbWHITE
+        #if player is None:
+        #    player = self._nextPlayer
+        #if player is self._WHITE:
+        #    return self._nbWHITE
         return self._nbBLACK
 
     #approche 2: retourner le résultat (à appeler en fin de partie)
     def end_heuristique2(self, player=None):
         if player is None:
             player = self._nextPlayer
-        winner = 1
+        winner = 1000
         if self._nbWHITE > self._nbBLACK:
-            winner = -1
+            winner = -1000
         elif self._nbWHITE == self._nbBLACK:
             winner = 0
-        if player is self._WHITE:
-            return -winner
+        #if player is self._WHITE:
+        #    return -winner
         return winner
 
+    #approche 3: retourner le nombre de jeton si on gagne, et une val négative si on perd
+    def end_heuristique3(self,player=None):
+        if player is None:
+            player = self._nextPlayer
+        if self._nbWHITE > self._nbBLACK:
+            return (-1000)+10*self._nbBLACK
+        else:
+             return 25*self._nbBLACK
     
     def evaluate_undercorner(self,x,y,player):
         if x<2:
@@ -237,6 +245,8 @@ class Board:
                 return 10
             else:
                 return -100
+
+    
     # Exemple d'heuristique : evaluer le board entier selon les bords
     def heuristique(self, player=None):
         if player is None:
@@ -249,7 +259,7 @@ class Board:
                 point = 0
                 if x == 0 or x == self._boardsize-1:
                     if y==0 or y == self._boardsize-1:
-                        point=75
+                        point=100
                     if y==1 or y == self._boardsize-2:
                         point= self.evaluate_undercorner(x,y,player)
                     else:
@@ -293,8 +303,8 @@ class Board:
     def heuristique0(self, player=None):
         if player is None:
             player = self._nextPlayer
-        if player is self._WHITE:
-            return self._nbWHITE - self._nbBLACK
+        #if player is self._WHITE:
+        #    return self._nbWHITE - self._nbBLACK
         return self._nbBLACK - self._nbWHITE
 
     def _piece2str(self, c):
