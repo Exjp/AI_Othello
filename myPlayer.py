@@ -12,7 +12,10 @@ class myPlayer(PlayerInterface):
         self._mycolor = None
 
     def getPlayerName(self):
-        return "Saucisse"
+        if self._mycolor == self._board._BLACK:
+            return "Saucisse"
+        else:
+            return "BIM BAM BOUM"
 
     def getresult(self,color):
     
@@ -23,25 +26,27 @@ class myPlayer(PlayerInterface):
 
     #approche 1: simplement retourner le nombre de jeton
     def end_heuristique1(self, player=None):
-        if player is None:
-            player = self._board._board._nextPlayer
-        if player is self._board._WHITE:
-            return self._board._nbWHITE
         return self._board._nbBLACK
 
     #approche 2: retourner le résultat (à appeler en fin de partie)
     def end_heuristique2(self, player=None):
         if player is None:
             player = self._board._nextPlayer
-        winner = 1
+        winner = 1000
         if self._board._nbWHITE > self._board._nbBLACK:
-            winner = -1
+            winner = -1000
         elif self._board._nbWHITE == self._board._nbBLACK:
             winner = 0
-        if player is self._board._WHITE:
-            return -winner
         return winner
 
+   #approche 3: retourner le nombre de jeton si on gagne, et une val négative si on perd
+    def end_heuristique3(self,player=None):
+        if player is None:
+            player = self._nextPlayer
+        if self._nbWHITE > self._nbBLACK:
+            return (-1000)+10*self._nbBLACK
+        else:
+             return 25*self._nbBLACK
     
     def evaluate_undercorner(self,x,y,player):
         if x<2:
@@ -58,6 +63,7 @@ class myPlayer(PlayerInterface):
                 return 10
             else:
                 return -100
+
     # Exemple d'heuristique : evaluer le board entier selon les bords
     def heuristique(self, player=None):
         if player is None:
@@ -70,7 +76,7 @@ class myPlayer(PlayerInterface):
                 point = 0
                 if x == 0 or x == self._board._boardsize-1:
                     if y==0 or y == self._board._boardsize-1:
-                        point=75
+                        point=100
                     if y==1 or y == self._board._boardsize-2:
                         point= self.evaluate_undercorner(x,y,player)
                     else:
@@ -89,8 +95,6 @@ class myPlayer(PlayerInterface):
                     score-=point
                 elif self._board._board[x][y] is self._board._BLACK:
                     score+=point
-        #if player is self._WHITE:
-        #    score *= -1 
         return score
 
     # Exemple d'heuristique simple : compte simplement les pieces et valoriser les coins
@@ -114,13 +118,15 @@ class myPlayer(PlayerInterface):
     def heuristique0(self, player=None):
         if player is None:
             player = self._board._nextPlayer
-        if player is self._board._WHITE:
-            return self._board._nbWHITE - self._board._nbBLACK
+        #if player is self._board._WHITE:
+        #    return self._board._nbWHITE - self._board._nbBLACK
         return self._board._nbBLACK - self._board._nbWHITE
 
 
     def maxValue(self, alpha, beta,color,depth,seconds):
-        if self._board.is_game_over() or depth == 0 or (time.time() - seconds >= 5):
+        if self._board.is_game_over():
+            return self.end_heuristique1()
+        if depth == 0 or (time.time() - seconds >= 5):
             res = self.heuristique()
             return res
 
@@ -136,7 +142,9 @@ class myPlayer(PlayerInterface):
         return alpha
 
     def minValue(self, alpha, beta,color,depth, seconds):
-        if self._board.is_game_over() or depth == 0 or (time.time() - seconds >= 5):
+        if self._board.is_game_over():
+            return self.end_heuristique1()
+        if depth == 0 or (time.time() - seconds >= 5):
             res = self.heuristique()
             return res
         if not self._board.legal_moves():
@@ -150,34 +158,36 @@ class myPlayer(PlayerInterface):
         
         return beta
 
-    def alphabeta(self,color):
-        better = -1
+    def alphabeta(self,color, depth):
         tmp = []
         score = 0
+        nbmoves = 0
         seconds = time.time()
         for move in self._board.legal_moves():
             self._board.push(move)
-            res = self.minValue(-100000, 1000000,color,4,seconds)
-            self._board.pop()
+            res = self.minValue(-60000, 600000,color,depth,seconds)
+
             if not tmp:
-                print("MOVE =============== ",move)
-                print("RES ============ ",res)
                 tmp = move
                 score = res
+                nbmoves = len(self._board.legal_moves())
             else:
-                print("MOVE =============== ",move)
-                print("RES ============ ",res)
                 if res > score:
                     score = res
                     tmp = move
                     score = res
-                elif res <= 0:
-                    if len(tmp) == 0:
+                    nbmoves = len(self._board.legal_moves())
+                elif res==score:
+                    nbtmp = len(self._board.legal_moves())
+                    if nbtmp > nbmoves:
                         tmp = move
-                elif res == 0 and better -1:
-                    better = 0
-                    tmp = move
-        print("time it takes to choose a moove = ",(time.time() - seconds))
+                        score = res
+                        nbmoves = nbtmp
+            self._board.pop()
+            
+
+                
+        print("time it takes to choose a move = ",(time.time() - seconds))
         print("chosing move of score" + str(score))
         return  tmp
         
@@ -186,11 +196,22 @@ class myPlayer(PlayerInterface):
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
             return (-1,-1)
+        
         if self._mycolor == self._board._BLACK:
-            move = self.alphabeta(self._mycolor)
+            (w,b) = self._board.get_nb_pieces()
+            if w+b>89:
+                move = self.alphabeta(self._mycolor,10)
+            else:
+                move = self.alphabeta(self._mycolor,3)
+            
         elif self._mycolor == self._board._WHITE:
             moves = [m for m in self._board.legal_moves()]
             move = moves[randint(0,len(moves)-1)]
+            (w,b) = self._board.get_nb_pieces()
+            if w+b>89:
+                move = self.alphabeta(self._mycolor,10)
+            else:
+                move = self.alphabeta(self._mycolor,3)
         self._board.push(move)
         print("I am playing ", move)
         (c,x,y) = move

@@ -22,15 +22,15 @@ totalTime = [0,0] # total real time for each player
 nextplayer = 0
 nextplayercolor = b._BLACK
 nbmoves = 1
-
+displayBoard(b)
 outputs = ["",""]
 sysstdout= sys.stdout
 stringio = StringIO()
 print(b.legal_moves())
 while not b.is_game_over():
-    print("Referee Board:")
+    #print("Referee Board:")
     #print(b)
-    displayBoard(b)
+    
     print("Before move", nbmoves)
     print("Legal Moves: ", b.legal_moves())
     nbmoves += 1
@@ -59,6 +59,7 @@ while not b.is_game_over():
     nextplayer = otherplayer
     nextplayercolor = othercolor
     #time.sleep(0.5)
+    displayBoard(b)
     print(b)
 
 print("The game is over")
@@ -73,4 +74,5 @@ elif nbblacks > nbwhites:
 else:
     print("DEUCE")
 print("nbblacks :" + str(nbblacks) + "    nbwhites :" + str(nbwhites))
+input("press enter to end")
 
