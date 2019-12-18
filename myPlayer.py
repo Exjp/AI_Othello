@@ -53,19 +53,24 @@ class myPlayer(PlayerInterface):
     def alphabeta(self,color):
         better = -1
         tmp = []
+        score = 0
 
         for move in self._board.legal_moves():
             self._board.push(move)
             res = self.minValue(-2, 2,color,4)
             self._board.pop()
-            if res > 0:
-                return move
-            elif res <= 0:
-                if len(tmp) == 0:
-                    tmp = move
-            elif res == 0 and better -1:
-                better = 0
+            if not tmp:
                 tmp = move
+                score = res
+            else:
+                if res > score:
+                    tmp = move
+                elif res <= 0:
+                    if len(tmp) == 0:
+                        tmp = move
+                elif res == 0 and better -1:
+                    better = 0
+                    tmp = move
 
         return  tmp
         
