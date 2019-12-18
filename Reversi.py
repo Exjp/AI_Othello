@@ -200,6 +200,26 @@ class Board:
             moves = [[self._nextPlayer, -1, -1]] # We shall pass
         return moves
 
+    #approche 1: simplement retourner le nombre de jeton
+    def end_heuristique1(self, player=None):
+        if player is None:
+            player = self._nextPlayer
+        if player is self._WHITE:
+            return self._nbWHITE
+        return self._nbBLACK
+
+    def end_heuristique2(self, player=None):
+        if player is None:
+            player = self._nextPlayer
+        winner = 1
+        if self._nbWHITE > self._nbBLACK:
+            winner = -1
+        elif self._nbWHITE == self._nbBLACK:
+            winner = 0
+        if player is self._WHITE:
+            return -winner
+        return winner
+
     # Exemple d'heuristique tres simple : compte simplement les pieces
     def heuristique(self, player=None):
         if player is None:
@@ -208,10 +228,10 @@ class Board:
         for x in range(2):
             for y in range(2):
                 if self._board[x*(self._boardsize-1)][y*(self._boardsize-1)] is self._WHITE:
-                    corners -= 500
-                    print("corner "+str(x)+" "+str(y)+" can be white")
+                    #corners -= 50000
+                    #print("corner "+str(x)+" "+str(y)+" can be white")
                 elif self._board[x*(self._boardsize-1)][y*(self._boardsize-1)] is self._BLACK:
-                    corners+= 500
+                    corners+= 50000
                     print("corner "+str(x)+" "+str(y)+" can be black")
         if player is self._WHITE:
             return self._nbWHITE - self._nbBLACK - corners 
