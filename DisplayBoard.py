@@ -3,7 +3,7 @@ from pygame.locals import *
 import Reversi
 
 screen = pygame.display.set_mode((1000, 1000))
-pygame.display.set_caption('Chorizo')
+pygame.display.set_caption('reversy')
 
 background = pygame.Surface(screen.get_size())
 background = background.convert()

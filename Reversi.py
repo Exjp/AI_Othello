@@ -228,6 +228,7 @@ class Board:
         for x in range(2):
             for y in range(2):
                 if self._board[x*(self._boardsize-1)][y*(self._boardsize-1)] is self._WHITE:
+                    a = 1
                     #corners -= 50000
                     #print("corner "+str(x)+" "+str(y)+" can be white")
                 elif self._board[x*(self._boardsize-1)][y*(self._boardsize-1)] is self._BLACK:

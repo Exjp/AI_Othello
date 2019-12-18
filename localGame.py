@@ -58,7 +58,7 @@ while not b.is_game_over():
 
     nextplayer = otherplayer
     nextplayercolor = othercolor
-    time.sleep(1)
+    #time.sleep(1)
     print(b)
 
 print("The game is over")

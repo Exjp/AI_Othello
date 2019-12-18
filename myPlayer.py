@@ -21,49 +21,54 @@ class myPlayer(PlayerInterface):
         else:
             return -1
 
-    def maxValue(self, alpha, beta,color,depth):
-        if self._board.is_game_over() or depth == 0:
+    def maxValue(self, alpha, beta,depth,seconds):
+        if self._board.is_game_over() or depth == 0 or (time.time() - seconds >= 5):
             res = self._board.heuristique()
             return res
 
 
         for i in self._board.legal_moves():
             self._board.push(i)
-            alpha = max(alpha, self.minValue(alpha, beta, color,depth - 1))
+            alpha = max(alpha, self.minValue(alpha, beta,depth - 1,seconds))
             self._board.pop()
             if alpha >= beta:
                 return beta
 
         return alpha
 
-    def minValue(self, alpha, beta,color,depth):
-        if self._board.is_game_over() or depth == 0:
+    def minValue(self, alpha, beta,depth, seconds):
+        if self._board.is_game_over() or depth == 0 or (time.time() - seconds >= 5):
             res = self._board.heuristique()
             return res
 
         for i in self._board.legal_moves():
             self._board.push(i)
-            beta = min(beta, self.maxValue(alpha, beta,color,depth - 1))
+            beta = min(beta, self.maxValue(alpha, beta,depth - 1, seconds))
             self._board.pop()
             if alpha >= beta:
                 return alpha
         
         return beta
 
-    def alphabeta(self,color):
+    def alphabeta(self):
         better = -1
         tmp = []
         score = 0
-
+        seconds = time.time()
         for move in self._board.legal_moves():
             self._board.push(move)
-            res = self.minValue(-2, 2,color,4)
+            res = self.minValue(-100000, 1000000,4,seconds)
             self._board.pop()
             if not tmp:
+                print("MOVE =============== ",move)
+                print("RES ============ ",res)
                 tmp = move
                 score = res
             else:
+                print("MOVE =============== ",move)
+                print("RES ============ ",res)
                 if res > score:
+                    score = res
                     tmp = move
                 elif res <= 0:
                     if len(tmp) == 0:
@@ -71,7 +76,7 @@ class myPlayer(PlayerInterface):
                 elif res == 0 and better -1:
                     better = 0
                     tmp = move
-
+        print("time it takes to choose a moove = ",(time.time() - seconds))
         return  tmp
         
 
@@ -80,7 +85,7 @@ class myPlayer(PlayerInterface):
             print("Referee told me to play but the game is over!")
             return (-1,-1)
         if self._mycolor == self._board._BLACK:
-            move = self.alphabeta(self._mycolor)
+            move = self.alphabeta()
         elif self._mycolor == self._board._WHITE:
             moves = [m for m in self._board.legal_moves()]
             move = moves[randint(0,len(moves)-1)]
