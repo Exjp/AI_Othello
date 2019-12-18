@@ -26,7 +26,8 @@ class myPlayer(PlayerInterface):
             res = self._board.heuristique()
             return res
 
-
+        if not self._board.legal_moves():
+            return minValue(alpha,beta,color, depth)
         for i in self._board.legal_moves():
             self._board.push(i)
             alpha = max(alpha, self.minValue(alpha, beta, color,depth - 1))
@@ -40,9 +41,11 @@ class myPlayer(PlayerInterface):
         if self._board.is_game_over() or depth == 0:
             res = self._board.heuristique()
             return res
-
+        if not self._board.legal_moves():
+            return maxValue(alpha,beta,color, depth)
         for i in self._board.legal_moves():
             self._board.push(i)
+
             beta = min(beta, self.maxValue(alpha, beta,color,depth - 1))
             self._board.pop()
             if alpha >= beta:
@@ -57,7 +60,7 @@ class myPlayer(PlayerInterface):
 
         for move in self._board.legal_moves():
             self._board.push(move)
-            res = self.minValue(-2, 2,color,4)
+            res = self.minValue(-60000, 600000,color,4)
             self._board.pop()
             if not tmp:
                 tmp = move
@@ -65,13 +68,14 @@ class myPlayer(PlayerInterface):
             else:
                 if res > score:
                     tmp = move
+                    score = res
                 elif res <= 0:
                     if len(tmp) == 0:
                         tmp = move
                 elif res == 0 and better -1:
                     better = 0
                     tmp = move
-
+        print("chosing move of score" + str(score))
         return  tmp
         
 

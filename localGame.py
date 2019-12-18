@@ -58,7 +58,7 @@ while not b.is_game_over():
 
     nextplayer = otherplayer
     nextplayercolor = othercolor
-    time.sleep(1)
+    #time.sleep(0.5)
     print(b)
 
 print("The game is over")
@@ -72,4 +72,5 @@ elif nbblacks > nbwhites:
     print("BLACK")
 else:
     print("DEUCE")
+print("nbblacks :" + str(nbblacks) + "    nbwhites :" + str(nbwhites))
 
