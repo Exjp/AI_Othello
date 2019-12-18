@@ -21,6 +21,104 @@ class myPlayer(PlayerInterface):
         else:
             return -1
 
+    #approche 1: simplement retourner le nombre de jeton
+    def end_heuristique1(self, player=None):
+        if player is None:
+            player = self._board._board._nextPlayer
+        if player is self._board._WHITE:
+            return self._board._nbWHITE
+        return self._board._nbBLACK
+
+    #approche 2: retourner le résultat (à appeler en fin de partie)
+    def end_heuristique2(self, player=None):
+        if player is None:
+            player = self._board._nextPlayer
+        winner = 1
+        if self._board._nbWHITE > self._board._nbBLACK:
+            winner = -1
+        elif self._board._nbWHITE == self._board._nbBLACK:
+            winner = 0
+        if player is self._board._WHITE:
+            return -winner
+        return winner
+
+    
+    def evaluate_undercorner(self,x,y,player):
+        if x<2:
+            if y<2 and self._board._board[0][0] != self._board._EMPTY:
+                return 10
+            elif y> self._board._boardsize-3 and self._board._board[0][self._board._boardsize-1] != self._board._EMPTY:
+                return 10
+            else:
+                return -100
+        else:
+            if y<2 and self._board._board[self._board._boardsize-1][0] != self._board._EMPTY:
+                return 10
+            elif y> self._board._boardsize-3 and self._board._board[self._board._boardsize-1][self._board._boardsize-1] != self._board._EMPTY:
+                return 10
+            else:
+                return -100
+    # Exemple d'heuristique : evaluer le board entier selon les bords
+    def heuristique(self, player=None):
+        if player is None:
+            player = self._board._nextPlayer
+        score = 0
+        for x in range(self._board._boardsize):
+            for y in range(self._board._boardsize):
+                if self._board._board[x][y] is self._board._EMPTY:
+                    continue
+                point = 0
+                if x == 0 or x == self._board._boardsize-1:
+                    if y==0 or y == self._board._boardsize-1:
+                        point=75
+                    if y==1 or y == self._board._boardsize-2:
+                        point= self.evaluate_undercorner(x,y,player)
+                    else:
+                        point =10
+                elif y==0 or y == self._board._boardsize-1:
+                    if x== 1 or x == self._board._boardsize-2:
+                        point = self.evaluate_undercorner(x,y,player)
+                    else:
+                        point =10
+                elif x==1 or x== self._board._boardsize-2:
+                    if y==1 or y==self._board._boardsize-2:
+                        point=self.evaluate_undercorner(x,y,player)
+                else:
+                    point+=1
+                if self._board._board[x][y] is self._board._WHITE:
+                    score-=point
+                elif self._board._board[x][y] is self._board._BLACK:
+                    score+=point
+        #if player is self._WHITE:
+        #    score *= -1 
+        return score
+
+    # Exemple d'heuristique simple : compte simplement les pieces et valoriser les coins
+    def heuristique01(self, player=None):
+        if player is None:
+            player = self._board._board._nextPlayer
+        corners = 0
+        for x in range(2):
+            for y in range(2):
+                if self._board[x*(self._board._boardsize-1)][y*(self._board._boardsize-1)] is self._board_WHITE:
+                    corners -= 50
+                    print("corner "+str(x)+" "+str(y)+" can be white")
+                elif self._board._board[x*(self._board._boardsize-1)][y*(self._board._boardsize-1)] is self._board._BLACK:
+                    corners+= 50
+                    print("corner "+str(x)+" "+str(y)+" can be black")
+        #if player is self._WHITE:
+        #    return self._nbWHITE - self._nbBLACK - corners 
+        return self._board._nbBLACK - self.board._nbWHITE + corners
+
+    # Exemple d'heuristique tres simple : compte simplement les pieces
+    def heuristique0(self, player=None):
+        if player is None:
+            player = self._board._nextPlayer
+        if player is self._board._WHITE:
+            return self._board._nbWHITE - self._board._nbBLACK
+        return self._board._nbBLACK - self._board._nbWHITE
+
+
     def maxValue(self, alpha, beta,color,depth,seconds):
         if self._board.is_game_over() or depth == 0 or (time.time() - seconds >= 5):
             res = self._board.heuristique()
@@ -39,7 +137,7 @@ class myPlayer(PlayerInterface):
 
     def minValue(self, alpha, beta,color,depth, seconds):
         if self._board.is_game_over() or depth == 0 or (time.time() - seconds >= 5):
-            res = self._board.heuristique()
+            res = self.heuristique()
             return res
         if not self._board.legal_moves():
             return maxValue(alpha,beta,color, depth)
