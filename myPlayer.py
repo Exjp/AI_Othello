@@ -89,7 +89,7 @@ class myPlayer(PlayerInterface):
             print("Referee told me to play but the game is over!")
             return (-1,-1)
         if self._mycolor == self._board._BLACK:
-            move = self.alphabeta()
+            move = self.alphabeta(self._mycolor)
         elif self._mycolor == self._board._WHITE:
             moves = [m for m in self._board.legal_moves()]
             move = moves[randint(0,len(moves)-1)]
