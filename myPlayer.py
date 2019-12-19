@@ -166,6 +166,7 @@ class myPlayer(PlayerInterface):
         score = 0
         nbmoves = 0
         currentTime = time.time()
+        # print(self._board.legal_moves())
         for move in self._board.legal_moves():
             self._board.push(move)
             res = self.minValue(-60000, 600000,color,depth,seconds, currentTime)
@@ -199,15 +200,20 @@ class myPlayer(PlayerInterface):
         
     def alphabetait(self,color):
         startTime = time.time()
-        seconds = 3
+        seconds = 5
         depth = 1
         liste = []
         score = 0
         tmp = []
+        (w,b)= self._board.get_nb_pieces()
 
-        while time.time() - startTime < seconds:
-            leftTime = seconds -  time.time() - startTime
-            liste.append(self.alphabeta(color,depth,leftTime))
+
+        while (time.time() - startTime < seconds) and depth <= 100-(w + b):
+            leftTime = seconds -  (time.time() - startTime)
+            print("profondeur = ",depth)
+            tmpdepth = depth
+            tmp = self.alphabeta(color,tmpdepth,leftTime)
+            liste.append(tmp)
             depth += 1
 
 
@@ -217,8 +223,8 @@ class myPlayer(PlayerInterface):
             if(bestscore < move[1]):
                 tmp = move[0]
                 bestscore = move[1]
-        print("time it takes to choose a move = ",(time.time() - startTime))
-        print("chosing move of score" + str(bestscore))
+        # print("time it takes to choose a move = ",(time.time() - startTime))
+        # print("chosing move of score" + str(bestscore))
         return tmp
 
 
@@ -242,9 +248,9 @@ class myPlayer(PlayerInterface):
             if w+b>89:
                 # move  = self.alphabeta(self._mycolor, 10,5)
                 move = self.alphabetait(self._mycolor)
-            else:
-                # move  = self.alphabeta(self._mycolor, 3,5)
-                move = self.alphabetait(self._mycolor)
+            # else:
+            #     # move  = self.alphabeta(self._mycolor, 3,5)
+            #     move = self.alphabetait(self._mycolor)
         self._board.push(move)
         print("I am playing ", move)
         (c,x,y) = move
