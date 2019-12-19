@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-''' Fichier de règles du Reversi pour le tournoi Masters Info 2019 en IA.
-    Certaines parties de ce code sont fortement inspirée de 
+''' Fichier de rÃ¨gles du Reversi pour le tournoi Masters Info 2019 en IA.
+    Certaines parties de ce code sont fortement inspirÃ©e de 
     https://inventwithpython.com/chapter15.html
 
     '''
@@ -11,7 +11,7 @@ class Board:
     _WHITE = 2
     _EMPTY = 0
 
-    # Attention, la taille du plateau est donnée en paramètre
+    # Attention, la taille du plateau est donnÃ©e en paramÃ¨tre
     def __init__(self, boardsize = 8):
       self._nbWHITE = 2
       self._nbBLACK = 2
@@ -38,11 +38,11 @@ class Board:
 
     # Donne le nombre de pieces de blanc et noir sur le plateau
     # sous forme de tuple (blancs, noirs) 
-    # Peut être utilisé si le jeu est terminé pour déterminer le vainqueur
+    # Peut Ãªtre utilisÃ© si le jeu est terminÃ© pour dÃ©terminer le vainqueur
     def get_nb_pieces(self):
       return (self._nbWHITE, self._nbBLACK)
 
-    # Vérifie si player a le droit de jouer en (x,y)
+    # VÃ©rifie si player a le droit de jouer en (x,y)
     def is_valid_move(self, player, x, y):
         if x == -1 and y == -1:
             return not self.at_least_one_legal_move(player)
@@ -53,8 +53,8 @@ class Board:
 
     # Renvoie la liste des pieces a retourner si le coup est valide
     # Sinon renvoie False
-    # Ce code est très fortement inspiré de https://inventwithpython.com/chapter15.html
-    # y faire référence dans tous les cas
+    # Ce code est trÃ¨s fortement inspirÃ© de https://inventwithpython.com/chapter15.html
+    # y faire rÃ©fÃ©rence dans tous les cas
     def testAndBuild_ValidMove(self, player, xstart, ystart):
         if self._board[xstart][ystart] != self._EMPTY or not self._isOnBoard(xstart, ystart):
             return False
@@ -180,7 +180,7 @@ class Board:
             self._nbBLACK += len(toflip)
 
     # Est-ce que on peut au moins jouer un coup ?
-    # Note: cette info pourrait être codée plus efficacement
+    # Note: cette info pourrait Ãªtre codÃ©e plus efficacement
     def at_least_one_legal_move(self, player):
         for x in range(0,self._boardsize):
             for y in range(0,self._boardsize):
@@ -189,7 +189,7 @@ class Board:
         return False
 
     # Renvoi la liste des coups possibles
-    # Note: cette méthode pourrait être codée plus efficacement
+    # Note: cette mÃ©thode pourrait Ãªtre codÃ©e plus efficacement
     def legal_moves(self):
         moves = []
         for x in range(0,self._boardsize):
@@ -199,6 +199,14 @@ class Board:
         if len(moves) is 0:
             moves = [[self._nextPlayer, -1, -1]] # We shall pass
         return moves
+
+    # Exemple d'heuristique tres simple : compte simplement les pieces
+    def heuristique(self, player=None):
+        if player is None:
+            player = self._nextPlayer
+        if player is self._WHITE:
+            return self._nbWHITE - self._nbBLACK
+        return self._nbBLACK - self._nbWHITE
 
     def _piece2str(self, c):
         if c==self._WHITE:
@@ -220,5 +228,4 @@ class Board:
         return toreturn
 
     __repr__ = __str__
-
 

@@ -1,6 +1,7 @@
 import Reversi
 from random import randint
 from playerInterface import *
+import time
 
 class RandomPlayer(PlayerInterface):
 
@@ -25,7 +26,7 @@ class RandomPlayer(PlayerInterface):
         
         moves = [m for m in self._board.legal_moves()]
         move = moves[randint(0,len(moves)-1)]
-            
+        time.sleep(0.5) 
         self._board.push(move)
         print("I am playing ", move)
         (c,x,y) = move

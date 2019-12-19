@@ -245,11 +245,14 @@ class humanPlayer(PlayerInterface):
                 moves = [m for m in self._board.legal_moves()]
                 move = moves[randint(0,len(moves)-1)]
                 break
+            if txt == "":
+                move = self.alphabeta(self._mycolor,4)
+                break
             play = txt.split()
             if len(play)!=2:
                 continue
             if play[0] == "ia":
-                move = move = self.alphabeta(self._mycolor,int(play[1],10))
+                move = self.alphabeta(self._mycolor,int(play[1],10))
                 break
             move = [num,int(play[0],10),int(play[1],10)]
             if move in self._board.legal_moves():

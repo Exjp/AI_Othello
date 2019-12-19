@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import time
 import Reversi
 from random import randint
@@ -10,9 +11,9 @@ class myPlayer(PlayerInterface):
     def __init__(self):
         self._board = Reversi.Board(10)
         self._mycolor = None
-        self._ulta_instinct = False
+        self._ultra_instinct = False
         self._flex = False
-        self._mytime = time.time()
+        self._mytime = 0
         self._nbmoves = 0
         self._quotes = ["I am Groot","Everything is going as expected...", "You're a though opponent, but I still have tricks in my sleeve.", "And it makes BIM BAM BOUM!",
          "Hoho, instead of running away, you're coming right to me?", "It makes PSHHH and it makes VROUM!!", "lol", "Want to have dinner after this?",
@@ -258,77 +259,74 @@ class myPlayer(PlayerInterface):
             return -score
         return score
 
-    def maxValue(self, alpha, beta,color,depth,seconds):
+    def maxValue(self, alpha, beta,color,depth,seconds,currentTime):
         if self._board.is_game_over():
             return self.end_heuristique3()
-        if depth == 0 or (time.time() - seconds >= 100):
-            res = self.heuristique()
-            return res
+        if depth == 0 or (time.time() - currentTime >= seconds):
+            return self.heuristique()
 
         if not self._board.legal_moves():
             return minValue(alpha,beta,color, depth)
         for i in self._board.legal_moves():
             self._board.push(i)
-            alpha = max(alpha, self.minValue(alpha, beta,color,depth - 1,seconds))
+            alpha = max(alpha, self.minValue(alpha, beta,color,depth - 1,seconds,currentTime))
             self._board.pop()
             if alpha >= beta:
                 return beta
 
         return alpha
 
-    def minValue(self, alpha, beta,color,depth, seconds):
+    def minValue(self, alpha, beta,color,depth, seconds,currentTime):
         if self._board.is_game_over():
             return self.end_heuristique3()
-        if depth == 0 or (time.time() - seconds >= 100):
-            res = self.heuristique()
-            return res
+        if depth == 0 or (time.time() - currentTime >= seconds):
+            return self.heuristique()
+
         if not self._board.legal_moves():
             return maxValue(alpha,beta,color, depth)
         for i in self._board.legal_moves():
             self._board.push(i)
-            beta = min(beta, self.maxValue(alpha, beta,color,depth - 1, seconds))
+            beta = min(beta, self.maxValue(alpha, beta,color,depth - 1, seconds,currentTime))
             self._board.pop()
             if alpha >= beta:
                 return alpha
+
         return beta
 
-    def alphabeta(self,color, depth):
+    
+    
+    def alphabeta(self,color, depth,seconds):
         tmp = []
         score = 0
         nbmoves = 0
-        seconds = time.time()
+        currentTime = time.time()
+        # print(self._board.legal_moves())
         for move in self._board.legal_moves():
             self._board.push(move)
-            res = self.minValue(-600000, 600000,color,depth,seconds)
+            res = self.minValue(-600000, 600000,color,depth,seconds, currentTime)
 
             if not tmp:
-                tmp = move
+                tmp = (move,res)
+                # tmp = move
                 score = res
                 nbmoves = len(self._board.legal_moves())
             else:
                 if res > score:
                     score = res
-                    tmp = move
+                    tmp = (move,res)
+                    # tmp = move
                     score = res
                     nbmoves = len(self._board.legal_moves())
                 elif res==score:
                     nbtmp = len(self._board.legal_moves())
-                    if nbtmp < nbmoves:
-                        tmp = move
+
+                    if nbtmp > nbmoves:
+                        tmp = (move,res)
+                        # tmp = move
                         score = res
                         nbmoves = nbtmp
             self._board.pop()
                 
-        print("time it takes to choose a move = ",(time.time() - seconds))
-        print("chosing move of score " + str(score))
-        if self._ulta_instinct and not self._flex:
-            self._flex = True
-            if score>0:
-                print("Omaewa mo... shindeiru")
-            elif score==0:
-                print("Je peuc voir le futur... Nous allons rejouer dans 1 minute")
-            else:
-                print("It was at this moment "+ self.getPlayerName() +" knew... he f***ed up")
         return  tmp
         
     def update_heuristique(self):
@@ -384,27 +382,68 @@ class myPlayer(PlayerInterface):
             else:
                 self._heuristiquetab[self._board._boardsize-2][y] = -10
 
+        
+    def alphabetait(self,color,time_limit):
+        startTime = time.time()
+        seconds = time_limit
+        depth = 1
+        coup1 = None
+        coup2 = None
+        (w,b)= self._board.get_nb_pieces()
+
+
+        while (time.time() - startTime < seconds) and depth <= 100-(w + b):
+            leftTime = seconds -  (time.time() - startTime)
+            print("profondeur = ",depth)
+            if coup1 is None:
+                coup1 = self.alphabeta(color,depth,leftTime)
+            else:
+                coup2 = coup1
+                coup1 = self.alphabeta(color,depth,leftTime)
+            if coup1[1]>5000:
+                return coup1[0]
+            depth += 1
+
+
+
+        if coup2 is not None:
+            if coup2[1] >= coup1[1]:
+                coup2 = coup1
+        # print("time it takes to choose a move = ",(time.time() - startTime))
+        print("chosing move of score" + str(coup1[1]))
+        if self._ultra_instinct and not self._flex:
+            self._flex = True
+            if coup1[1]>0:
+                print("Omaewa mo... shindeiru")
+            elif coup1[1]==0:
+                print("Je peuc voir le futur... Nous allons rejouer dans 1 minute")
+            else:
+                print("It was at this moment "+ self.getPlayerName() +" knew... he f***ed up")
+        return coup1[0]
+
 
     def getPlayerMove(self):
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
             return (-1,-1)
-        
+        move = None
         (w,b) = self._board.get_nb_pieces()
-        if w+b>88:
-            if not self._ulta_instinct:
-                self._ulta_instinct = True
+        if w+b>84:
+            if not self._ultra_instinct:
+                self._ultra_instinct = True
                 print("this is it, i go full ultra instinct")
-            move = self.alphabeta(self._mycolor,20)
-        elif w+b>45:
-            if (time.time() - self._mytime) / self._nbmoves < 12 :
-                move = self.alphabeta(self._mycolor,4)
-            else:
-                print("no time to think !!")
-                move = self.alphabeta(self._mycolor,3)
+            move = self.alphabetait(self._mycolor,15)
+        elif w+b>44:
+        #    if (time.time() - self._mytime) / self._nbmoves < 12 :
+            move = self.alphabetait(self._mycolor,7)
+        #    else:
+        #        print("no time to think !!")
+        #        move = self.alphabeta(self._mycolor,3)
             #print(self._quotes[randint(0,len(self._quotes)-1)])
+        elif w+b>24:
+            move = self.alphabetait(self._mycolor,4)
         else:
-            move = self.alphabeta(self._mycolor,3)
+            move = self.alphabetait(self._mycolor,6)
         self._board.push(move)
         self._nbmoves += 1
         (c,x,y) = move
