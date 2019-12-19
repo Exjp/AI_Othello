@@ -83,7 +83,7 @@ class myPlayer(PlayerInterface):
         colmax = 9
         line =0
         color = self._board._board[x][y]
-        score = 50
+        score = 100
         while(colmax>=0 and line < 10):
             for col in range(colmax+1):
                 if self._board._board[line][col] != color:
@@ -97,7 +97,7 @@ class myPlayer(PlayerInterface):
         colmax = 0
         line =0
         color = self._board._board[x][y]
-        score = 50
+        score = 100
         while(colmax<=9 and line < 10):
             for col in range(9,colmax-1,-1):
                 if self._board._board[line][col] != color:
@@ -111,7 +111,7 @@ class myPlayer(PlayerInterface):
         colmax = 9
         line =9
         color = self._board._board[x][y]
-        score = 50
+        score = 100
         while(colmax>=0 and line >= 0):
             for col in range(colmax+1):
                 if self._board._board[line][col] != color:
@@ -124,7 +124,7 @@ class myPlayer(PlayerInterface):
         colmax = 0
         line =9
         color = self._board._board[x][y]
-        score = 50
+        score = 100
         while(colmax<=9 and line >=0):
             for col in range(9, colmax-1,-1):
                 if self._board._board[line][col] != color:
@@ -151,22 +151,22 @@ class myPlayer(PlayerInterface):
     def evaluate_undercorner(self,x,y):
         if x<2:
             if y<2 and self._board._board[0][0] != self._board._EMPTY:
-                return 5
+                return 0
             elif y> self._board._boardsize-3 and self._board._board[0][self._board._boardsize-1] != self._board._EMPTY:
-                return 5
+                return 0
             else:
                 if x==1 and y == 1 or x == 1 and y == self._board._boardsize-2:
                     return -125
-                return -50
+                return -75
         else:
             if y<2 and self._board._board[self._board._boardsize-1][0] != self._board._EMPTY:
-                return 5
+                return 0
             elif y> self._board._boardsize-3 and self._board._board[self._board._boardsize-1][self._board._boardsize-1] != self._board._EMPTY:
-                return 5
+                return 0
             else:
                 if x==self._board._boardsize-2 and y == 1 or x == self._board._boardsize-2 and y == self._board._boardsize-2:
-                    return -100
-                return -50
+                    return -125
+                return -75
 
     def heuristique11(self,player=None):
         #self.update_heuristique()
