@@ -20,7 +20,7 @@ class myPlayer(PlayerInterface):
          "No way I'm losing now !", "\"When the sage points the moon the idiot looks at the finger\".","The cake is a lie.", "YOU. SHALL. NOT. PASS.",
          "It's over Anakin, I have the high ground!", "Yippee-ki-yay", "Hatsa la vista, baby","To infinity and beyond!","Try dodging this.",
          "Don't push it, or I'll give you a war you won't believe.","Kneel before me.", "I'll beat you. Not this turn, not the following turn... But I'll beat you.",
-         "You know nothing, A.I. Snow.", "Winter is coming.", "PLUS ULTRRRAAAA!!", "My power is MAXIMUM!!", "Hodor.","Hodor?","HODOR!!",]
+         "You know nothing, A.I. Snow.", "Winter is coming.", "PLUS ULTRRRAAAA!!", "My power is MAXIMUM!!", "Hodor.","Hodor?","HODOR!!","ok boomer."]
         print("Hello, nice to meet you")
         self._heuristiquetab = [
             [100 ,-50 ,40  ,10  ,10  ,10  ,10  ,40  ,-50 ,100 ],
@@ -156,7 +156,7 @@ class myPlayer(PlayerInterface):
                 return 5
             else:
                 if x==1 and y == 1 or x == 1 and y == self._board._boardsize-2:
-                    return -100
+                    return -125
                 return -50
         else:
             if y<2 and self._board._board[self._board._boardsize-1][0] != self._board._EMPTY:
@@ -427,6 +427,15 @@ class myPlayer(PlayerInterface):
             print("Referee told me to play but the game is over!")
             return (-1,-1)
         move = None
+        moves = self._board.legal_moves()
+        num = moves[0][0]
+        for x in range(2):
+            for y in range(2):
+                move = [num,x*(self._board._boardsize-1),y*(self._board._boardsize-1)]
+                if move in moves:
+                    self._board.push(move)
+                    self._nbmoves += 1
+                    return (move[1],move[2])
         (w,b) = self._board.get_nb_pieces()
         if w+b>84:
             if not self._ultra_instinct:
@@ -439,7 +448,7 @@ class myPlayer(PlayerInterface):
         #    else:
         #        print("no time to think !!")
         #        move = self.alphabeta(self._mycolor,3)
-            #print(self._quotes[randint(0,len(self._quotes)-1)])
+            print(self._quotes[randint(0,len(self._quotes)-1)])
         elif w+b>24:
             move = self.alphabetait(self._mycolor,4)
         else:
