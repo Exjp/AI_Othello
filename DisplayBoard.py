@@ -29,6 +29,10 @@ def displayBoard(b):
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
+def endDisplay():
+    pygame.display.quit()
+    pygame.quit()
+
 def addPiece(X,Y,color):
     if color is 0:
         return
