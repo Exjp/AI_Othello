@@ -1,5 +1,6 @@
 from DisplayBoard import *
 import pygame
+import playerJ
 from pygame.locals import *
 
 import Reversi
@@ -14,17 +15,21 @@ b = Reversi.Board(10)
 player1 = None
 player2 = None
 while True:
-    plays = input("enter player (r, i, or h)\n")
+    plays = input("enter player (r, i, j, or h)\n")
     plays2 = plays.split()
     if len(plays2)==2:
         if plays2[0] == "r":
             player1 = RandomPlayer.RandomPlayer()
+        elif plays2[0] == "j":
+            player1 = playerJ.playerJ()
         elif plays2[0] == "i":
             player1 = myPlayer.myPlayer()
         elif plays2[0] == "h":
             player1 = humanPlayer.humanPlayer()
         if plays2[1] == "r":
             player2 = RandomPlayer.RandomPlayer()
+        elif plays2[1] == "j":
+            player2 = playerJ.playerJ()
         elif plays2[1] == "i":
             player2 = myPlayer.myPlayer()
         elif plays2[1] == "h":
