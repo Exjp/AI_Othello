@@ -83,7 +83,7 @@ class myPlayer(PlayerInterface):
         colmax = 9
         line =0
         color = self._board._board[x][y]
-        score = 50
+        score = 100
         while(colmax>=0 and line < 10):
             for col in range(colmax+1):
                 if self._board._board[line][col] != color:
@@ -97,7 +97,7 @@ class myPlayer(PlayerInterface):
         colmax = 0
         line =0
         color = self._board._board[x][y]
-        score = 50
+        score = 100
         while(colmax<=9 and line < 10):
             for col in range(9,colmax-1,-1):
                 if self._board._board[line][col] != color:
@@ -111,7 +111,7 @@ class myPlayer(PlayerInterface):
         colmax = 9
         line =9
         color = self._board._board[x][y]
-        score = 50
+        score = 100
         while(colmax>=0 and line >= 0):
             for col in range(colmax+1):
                 if self._board._board[line][col] != color:
@@ -124,7 +124,7 @@ class myPlayer(PlayerInterface):
         colmax = 0
         line =9
         color = self._board._board[x][y]
-        score = 50
+        score = 100
         while(colmax<=9 and line >=0):
             for col in range(9, colmax-1,-1):
                 if self._board._board[line][col] != color:
