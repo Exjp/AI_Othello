@@ -43,7 +43,7 @@ while not b.is_game_over():
     nbmoves += 1
     otherplayer = (nextplayer + 1) % 2
     othercolor = b._BLACK if nextplayercolor == b._WHITE else b._WHITE
-    
+    print(b)
     currentTime = time.time()
     sys.stdout = stringio
     move = players[nextplayer].getPlayerMove()

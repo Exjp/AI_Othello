@@ -336,7 +336,7 @@ class myPlayer(PlayerInterface):
             return (move[1],move[2])
         num = moves[0][0]
         (w,b) = self._board.get_nb_pieces()
-        if w+b<88:
+        if w+b<87:
             for x in range(2):
                 for y in range(2):
                     move = [num,x*(self._board._boardsize-1),y*(self._board._boardsize-1)]
