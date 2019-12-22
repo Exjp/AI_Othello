@@ -35,6 +35,9 @@ class humanPlayer(PlayerInterface):
             if txt == "a":
                 move = moves[randint(0,len(moves)-1)]
                 break
+            if txt=="q":
+                print("exit")
+                sys.exit()
             if txt == "" or txt == "ia":
                 movee = self.ai.getPlayerMove()
                 move = (num,movee[0],movee[1])
