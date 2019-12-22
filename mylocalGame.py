@@ -1,22 +1,48 @@
+from DisplayBoard import *
 import pygame
 from pygame.locals import *
 from random import randint
-import time
-from io import StringIO
-import sys
 
 import Reversi
-from DisplayBoard import *
-
 import myPlayer
 import RandomPlayer
 import humanPlayer
 import myPlayerv0
+import time
+from io import StringIO
+import sys
 
-#init for board and players
+
 b = Reversi.Board(10)
-player1 = myPlayer.myPlayer()
-player2 = myPlayer.myPlayer()
+player1 = None
+player2 = None
+while True:
+    plays = input("enter players (r, i, i2, z, or h)\n")
+    plays2 = plays.split()
+    if len(plays2)==2:
+        if plays2[0] == "r":
+            player1 = RandomPlayer.RandomPlayer()
+        elif plays2[0] == "i":
+            player1 = myPlayer.myPlayer()
+        elif plays2[0] == "h":
+            player1 = humanPlayer.humanPlayer()
+        elif plays2[0] == "i2":
+            player1 = myPlayerv0.myPlayer()
+        elif plays2[0] == "z":
+            player1 = humanPlayer.clickerPlayer()
+        if plays2[1] == "r":
+            player2 = RandomPlayer.RandomPlayer()
+        elif plays2[1] == "i":
+            player2 = myPlayer.myPlayer()
+        elif plays2[1] == "h":
+            player2 = humanPlayer.humanPlayer()
+        elif plays2[1] == "i2":
+            player2 = myPlayerv0.myPlayer()
+        elif plays2[1] == "z":
+            player2 = humanPlayer.clickerPlayer()
+        if player1 is not None and player2 is not None:
+            break
+
 players = []
 player1.newGame(b._WHITE)
 player2.newGame(b._BLACK)
@@ -35,6 +61,7 @@ outputs = ["",""]
 sysstdout= sys.stdout
 stringio = StringIO()
 print(b.legal_moves())
+rand = int(input("how many random moves?\n"),10)
 
 while not b.is_game_over():
     
@@ -46,7 +73,15 @@ while not b.is_game_over():
     
     currentTime = time.time()
     sys.stdout = stringio
-    move = players[nextplayer].getPlayerMove()
+    if rand>0:
+        moves = [m for m in b.legal_moves()]
+        movee = moves[randint(0,len(moves)-1)]
+        players[nextplayer]._board.push(movee)
+        move = (movee[1],movee[2])
+        rand-=1
+        time.sleep(0.25)
+    else:
+        move = players[nextplayer].getPlayerMove()
     sys.stdout = sysstdout
     playeroutput = "\r" + stringio.getvalue()
     stringio.truncate(0)

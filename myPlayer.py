@@ -9,91 +9,53 @@ from playerInterface import *
 class myPlayer(PlayerInterface):
 
     def __init__(self):
-        self._board = Reversi.Board(10)
-        self._mycolor = None
-        self._ultra_instinct = False
-        self._flex = False
-        self._mytime = 0
-        self._nbmoves = 0
-        self._nbtimewasted = 0
+        self._board = Reversi.Board(10)     #the board we play on
+        self._mycolor = None                #our colour
+        self._ultra_instinct = False        #for the first time we see the end of the game
+        self._flex = False                  #to annouce if we think we lose or we win
+        self._nbmoves = 0                   #total number of moves
+        self._nbtimewasted = 0              #number of moves on which we wasted time
         self._quotes = ["I am Groot","Everything is going as expected...", "You're a though opponent, but I still have tricks in my sleeve.",
          "And it makes BIM BAM BOUM!","Hoho, instead of running away, you're coming right to me?", "It makes PSHHH and it makes VROUM!!", "lol",
-         "Want to have dinner after this?", "No way I'm losing now !", "\"When the sage points the moon the idiot looks at the finger\".","The cake is a lie.", 
+         "Want to have dinner after this?", "No way I'm losing now !", "\"When the sage points the moon, the idiot looks at the finger\".","The cake is a lie.", 
          "YOU. SHALL. NOT. PASS.", "It's over Anakin, I have the high ground!", "Yippee-ki-yay", "Hatsa la vista, baby","To infinity and beyond!","Try dodging this.",
          "Don't push it, or I'll give you a war you won't believe.","Kneel before me.", "I'll beat you. Not this turn, not the following turn... But I'll beat you.",
          "You know nothing, A.I. Snow.", "Winter is coming.", "PLUS ULTRRRAAAA!!", "My power is MAXIMUM!!", "Hodor.","Hodor?","HODOR!!","ok boomer.",
-         "You're much stronger than you look.","Avengers... ASSEMBLE!",":)",":D",":o",":^)","^^",":(","I love pizza. I mean, who doesn't?","Why so serious?"]
-        print("Hello, nice to meet you")
-        self._heuristiquetab = [
-            [100 ,-50 ,40  ,10  ,10  ,10  ,10  ,40  ,-50 ,100 ],
-            [-50 ,-100,25  ,-10 ,-10 ,-10 ,-10 ,25  ,-100,-50 ],
-            [40  ,25  ,25  ,6   ,6   ,6   ,6   ,25  ,25  ,40  ],
-            [10  ,-10 ,6   ,5   ,5   ,5   ,5   ,6   ,-10 ,10  ],
-            [10  ,-10 ,6   ,5   ,5   ,5   ,5   ,6   ,-10 ,10  ],
-            [10  ,-10 ,6   ,5   ,5   ,5   ,5   ,6   ,-10 ,10  ],
-            [10  ,-10 ,6   ,5   ,5   ,5   ,5   ,6   ,-10 ,10  ],
-            [40  ,25  ,25  ,6   ,6   ,6   ,6   ,25  ,25  ,40  ],
-            [-50 ,-100,25  ,-10 ,-10 ,-10 ,-10 ,25  ,-100,-50 ],
-            [100 ,-50 ,40  ,10  ,10  ,10  ,10  ,40  ,-50 ,100 ]]
+         "You're much stronger than you look.","Avengers... ASSEMBLE!","  :)","  :D","   :o", ":^)","  ^^","  :(","I love pizza. I mean, who doesn't?","Why so serious?",
+         "No, Luke, I AM your father!", "Who's your daddy now?", "TEQUILA!", "My name is Bond, A.I. Bond", "Eenee-Minee-Mynee-Moe.","I don't even know what I'm doing",
+         "This game is funny, what's its name again?", "I had a dream, in which I won this game.", "I understand EVERYTHING now !", "The prophecy is true.",
+         "An A.I. has no name.", "Roses are red, violets are blue, at the end of the game, the loser will be YOU.", "I'm hungry.", "Have you turned the gas off?",
+         "I play Pokemon Go everyday."]
+                                            #a bunch of quotes we say during the game
+        print("Hello, nice to meet you")    #we say hello because we're polite
 
+#getter for our name    
     def getPlayerName(self):
         if self._mycolor == self._board._BLACK:
             return "Dark Knight"
         else:
             return "White Mage"
 
+#getter for the result
     def getresult(self,color):
         if self._mycolor == color:
             return 1
         else:
             return -1
 
-    #approche 1: simplement retourner le nombre de jeton
-    def end_heuristique1(self, player=None):
-        if self._mycolor == self._board._WHITE:
-            return self._board._nbWHITE
-        return self._board._nbBLACK
-
-    #approche 2: retourner le résultat (à appeler en fin de partie)
-    def end_heuristique2(self, player=None):
-        if player is None:
-            player = self._board._nextPlayer
-        winner = 1000
-        if self._board._nbWHITE > self._board._nbBLACK:
-            winner = -1000
-        elif self._board._nbWHITE == self._board._nbBLACK:
-            winner = 0
-        if self._mycolor == self._board._WHITE:
-            return -winner
-        return winner
-
-   #approche 3: retourner le nombre de jeton si on gagne, et une val négative si on perd
-    def end_heuristique3(self,player=None):
-        score = 0
-        if self._board._nbWHITE > self._board._nbBLACK:
-            if self._mycolor == self._board._WHITE:
-                return 500*self._board._nbWHITE
-            return (-10000)+10*self._board._nbBLACK
-        elif self._board._nbWHITE < self._board._nbBLACK:
-            if self._mycolor == self._board._WHITE:
-                return (-10000)+10*self._board._nbWHITE
-            return 500*self._board._nbBLACK
-        else:
-            return 0
-
- #approche 4: retourner le nombre de jeton si on gagne, et une val négative si on perd
+#approach 4: heuristic to call in case of a game_over, return high positive or negative value, depending on if we lose or win
     def end_heuristique4(self,player=None):
-        score = (self._board._nbBLACK - self._board._nbWHITE)*500
+        score = (self._board._nbBLACK - self._board._nbWHITE)*5000
         if self._mycolor == self._board._WHITE:
             return -score
         return score
 
-
+#function to give a score to each corner, to evaluate if the position is established or not
     def evalupleft(self,x,y):
         colmax = 9
         line =0
         color = self._board._board[x][y]
-        score = 125
+        score = 150
         while(colmax>=0 and line < 10):
             for col in range(colmax+1):
                 if self._board._board[line][col] != color:
@@ -107,7 +69,7 @@ class myPlayer(PlayerInterface):
         colmax = 0
         line =0
         color = self._board._board[x][y]
-        score = 125
+        score = 150
         while(colmax<=9 and line < 10):
             for col in range(9,colmax-1,-1):
                 if self._board._board[line][col] != color:
@@ -121,12 +83,13 @@ class myPlayer(PlayerInterface):
         colmax = 9
         line =9
         color = self._board._board[x][y]
-        score = 125
+        score = 150
         while(colmax>=0 and line >= 0):
             for col in range(colmax+1):
                 if self._board._board[line][col] != color:
                     colmax = col-1
                     break
+                score +=50
             line-=1
         return score
     
@@ -134,12 +97,13 @@ class myPlayer(PlayerInterface):
         colmax = 0
         line =9
         color = self._board._board[x][y]
-        score = 140
+        score = 150
         while(colmax<=9 and line >=0):
             for col in range(9, colmax-1,-1):
                 if self._board._board[line][col] != color:
                     colmax = col+1
                     break
+                score +=50
             line-=1
         return score
     
@@ -157,7 +121,8 @@ class myPlayer(PlayerInterface):
             elif y== self._board._boardsize-1:
                 return self.evalbottomright(x,y)
         return 0
-    
+
+#function to evaluate the cases around the corner  
     def evaluate_undercorner(self,x,y):
         if x<2:
             if y<2 and self._board._board[0][0] != self._board._EMPTY:
@@ -178,29 +143,7 @@ class myPlayer(PlayerInterface):
                     return -150
                 return -110
 
-    def heuristique11(self,player=None):
-        #self.update_heuristique()
-        score = 0 
-        for x in range(self._board._boardsize):
-            for y in range(self._board._boardsize):
-
-                if self._board._board[x][y] is self._board._EMPTY:
-                    continue
-
-                point = self._heuristiquetab[x][y]
-                #point += self.evaluate_corner(x,y)
-
-                if self._board._board[x][y] is self._board._WHITE:
-                    score-=point
-                elif self._board._board[x][y] is self._board._BLACK:
-                    score+=point
-
-        if self._mycolor == self._board._WHITE:
-            return -score
-        return score
-
-
-    # Exemple d'heuristique : evaluer le board entier selon les bords
+# our heuristic, to give a score for a board
     def heuristique(self, player=None):
         score = 0
         for x in range(self._board._boardsize):
@@ -208,36 +151,38 @@ class myPlayer(PlayerInterface):
                 if self._board._board[x][y] is self._board._EMPTY:
                     continue
                 point = 0
-                if x == 0 or x == self._board._boardsize-1: #coins
-                    if y==0 or y == self._board._boardsize-1:
+                if x == 0 or x == self._board._boardsize-1: 
+                    if y==0 or y == self._board._boardsize-1:   #corners
                         point= self.evaluate_corner(x,y)
-                    elif y==1 or y == self._board._boardsize-2: #sous coins
+                    elif y==1 or y == self._board._boardsize-2: #undercorners
                         point= self.evaluate_undercorner(x,y)
-                    elif y==2 or y == self._board._boardsize-3: #sous sous coins
-                        point= 30
+                    elif y==2 or y == self._board._boardsize-3: 
+                        point= 50                               #underundercorners on the horizontal sides
                     else:
-                        point =20 # bords horizontaux
+                        point =20                               #horizontal sides
                 elif x == 1 or x == self._board._boardsize-2:
                     if y<2 or y >self._board._boardsize-3:
-                        point = self.evaluate_undercorner(x,y) #sous coins
+                        point = self.evaluate_undercorner(x,y)  #undercorners
                     elif y==2 or y ==self._board._boardsize-3:
-                        point=25
+                        point=25                                #underundercorners
                     else:
-                        point =-10 #sous bords horizontaux
+                        point =-10                              #horizontal undersides
                 elif x==2 or x== self._board._boardsize-3:
                     if y==0 or y==self._board._boardsize-1:
-                        point = 30
+                        point = 50                              #underundercorners on the vertical sides
                     elif y<3 or y>self._board._boardsize-4:
-                        point=25 #sous coins
+                        point=25                                #underundercorners
+                    else:
+                        point=4                                 #half-centered cases
                 else:
                     if y==0 or y == self._board._boardsize-1:
-                        point= 20
-                    elif y==1 or y == self._board._boardsize-2: #sous coins
-                        point= -10
-                    elif y==2 or y == self._board._boardsize-3: #sous sous coins
-                        point= 4
+                        point= 20                               #vertical sides
+                    elif y==1 or y == self._board._boardsize-2: 
+                        point= -10                              #vertical undersides
+                    elif y==2 or y == self._board._boardsize-3: 
+                        point= 4                                #half-centerd cases
                     else:
-                        point =3
+                        point =3                                #other cases
                 if self._board._board[x][y] is self._board._WHITE:
                     score-=point
                 elif self._board._board[x][y] is self._board._BLACK:
@@ -246,29 +191,7 @@ class myPlayer(PlayerInterface):
             return -score
         return score
 
-    # Exemple d'heuristique simple : compte simplement les pieces et valoriser les coins
-    def heuristique01(self, player=None):
-        corners = 0
-        for x in range(2):
-            for y in range(2):
-                if self._board[x*(self._board._boardsize-1)][y*(self._board._boardsize-1)] is self._board_WHITE:
-                    corners -= 50
-                    print("corner "+str(x)+" "+str(y)+" can be white")
-                elif self._board._board[x*(self._board._boardsize-1)][y*(self._board._boardsize-1)] is self._board._BLACK:
-                    corners+= 50
-                    print("corner "+str(x)+" "+str(y)+" can be black")
-        score = self._board._nbBLACK - self.board._nbWHITE + corners
-        if self._mycolor == self._board._WHITE:
-            return -score
-        return score
-
-    # Exemple d'heuristique tres simple : compte simplement les pieces
-    def heuristique0(self, player=None):
-        score = self._board._nbBLACK - self._board._nbWHITE
-        if self._mycolor == self._board._WHITE:
-            return -score
-        return score
-
+#maxValue function to determine the best move when it's our turn
     def maxValue(self, alpha, beta,color,depth,seconds,currentTime):
         if self._board.is_game_over():
             return self.end_heuristique4()
@@ -288,6 +211,7 @@ class myPlayer(PlayerInterface):
 
         return alpha
 
+#minvalue function to determine the best move when it's the opponent turn
     def minValue(self, alpha, beta,color,depth, seconds,currentTime):
         if self._board.is_game_over():
             return self.end_heuristique4()
@@ -308,102 +232,36 @@ class myPlayer(PlayerInterface):
         return beta
 
     
-    
+#alphabeta function, goes to a certain depth to find the best move to play, needs enough time to process
     def alphabeta(self,color, depth,seconds):
         tmp = []
         score = 0
         nbmoves = 0
         currentTime = time.time()
-        # print(self._board.legal_moves())
         for move in self._board.legal_moves():
             self._board.push(move)
             res = self.minValue(-600000, 600000,color,depth,seconds, currentTime)
 
             if not tmp:
                 tmp = (move,res)
-                # tmp = move
                 score = res
                 nbmoves = len(self._board.legal_moves())
             else:
                 if res > score:
                     score = res
                     tmp = (move,res)
-                    # tmp = move
-                    score = res
                     nbmoves = len(self._board.legal_moves())
                 elif res==score:
                     nbtmp = len(self._board.legal_moves())
 
                     if nbtmp > nbmoves:
                         tmp = (move,res)
-                        # tmp = move
                         score = res
                         nbmoves = nbtmp
             self._board.pop()
-        if self._ultra_instinct and not self._flex:
-            self._flex = True
-            if tmp[1]>0:
-                print("Omaewa mo... shindeiru")
-            elif tmp[1]==0:
-                print("Je peux voir le futur... Nous allons rejouer dans 1 minute")
-            else:
-                print("It was at this moment "+ self.getPlayerName() +" knew... he f***ed up")     
         return  tmp
-        
-    def update_heuristique(self):
-        if self._board._board[0][0] != self._board._EMPTY:
-            self._heuristiquetab[0][1] = 15
-            self._heuristiquetab[1][0] = 15
-            self._heuristiquetab[1][1] = 15
-        else:
-            self._heuristiquetab[0][1] = -50
-            self._heuristiquetab[1][0] = -50
-            self._heuristiquetab[1][1] = -100
-        if self._board._board[0][self._board._boardsize-1] != self._board._EMPTY:
-            self._heuristiquetab[0][self._board._boardsize-2] = 25
-            self._heuristiquetab[1][self._board._boardsize-1] = 25
-            self._heuristiquetab[1][self._board._boardsize-2] = 15
-        else:
-            self._heuristiquetab[0][self._board._boardsize-2] = -50
-            self._heuristiquetab[1][self._board._boardsize-1] = -50
-            self._heuristiquetab[1][self._board._boardsize-2] = -100
-        if self._board._board[self._board._boardsize-1][0] != self._board._EMPTY:
-            self._heuristiquetab[self._board._boardsize-2][0] = 25
-            self._heuristiquetab[self._board._boardsize-1][1] = 25
-            self._heuristiquetab[self._board._boardsize-2][1] = 15
-        else:
-            self._heuristiquetab[self._board._boardsize-2][0] = -50
-            self._heuristiquetab[self._board._boardsize-1][1] = -50
-            self._heuristiquetab[self._board._boardsize-2][1] = -100
-        if self._board._board[self._board._boardsize-1][self._board._boardsize-1] != self._board._EMPTY:
-            self._heuristiquetab[self._board._boardsize-2][self._board._boardsize-1] = 25
-            self._heuristiquetab[self._board._boardsize-1][self._board._boardsize-2] = 25
-            self._heuristiquetab[self._board._boardsize-2][self._board._boardsize-2] = 15
-        else:
-            self._heuristiquetab[self._board._boardsize-2][self._board._boardsize-1] = -50
-            self._heuristiquetab[self._board._boardsize-1][self._board._boardsize-2] = -50
-            self._heuristiquetab[self._board._boardsize-2][self._board._boardsize-2] = -100
-        
-        for x in range(3,self._board._boardsize-3):
-            if self._board._board[x][0] != self._board._EMPTY:
-                self._heuristiquetab[x][1] = 7
-            else:
-                self._heuristiquetab[x][1] = -10
-            if self._board._board[x][self._board._boardsize-1] != self._board._EMPTY:
-                self._heuristiquetab[x][self._board._boardsize-2] = 7
-            else:
-                self._heuristiquetab[x][self._board._boardsize-2] = -10
-        for y in range(3,self._board._boardsize-3):
-            if self._board._board[0][y] != self._board._EMPTY:
-                self._heuristiquetab[1][y] = 7
-            else:
-                self._heuristiquetab[1][y] = -10
-            if self._board._board[self._board._boardsize-1][y] != self._board._EMPTY:
-                self._heuristiquetab[self._board._boardsize-2][y] = 7
-            else:
-                self._heuristiquetab[self._board._boardsize-2][y] = -10
 
-        
+#iterative alphabeta, calls an alphabeta on every depth, until the time limit risks to be reached                
     def alphabetait(self,color,time_limit):
         startTime = time.time()
         seconds = time_limit
@@ -415,33 +273,53 @@ class myPlayer(PlayerInterface):
 
         while depth <= 100-(w + b):
             leftTime = seconds -  (time.time() - startTime)
-            #print("profondeur = ",depth)
             if coup1 is None:
                 coup1 = self.alphabeta(color,depth,leftTime)
             else:
                 coup2 = coup1
                 coup1 = self.alphabeta(color,depth,leftTime)
-            print("went to depth "+str(depth) + " with time "+str(time.time() - startTime)+"/"+str(seconds))
             if coup1[1]>5000 or (time.time() - startTime > seconds*(14/100)):
-                print("chosing move of score " + str(coup1[1]))
-                
+                print("depth "+str(depth)+"   time "+str(time.time()-startTime)+"/"+str(seconds))
                 if time.time() - startTime > seconds:
                     self._nbtimewasted+=1
+                    print("score  "+str(coup2[1]))
                     return coup2[0]               
-                
+                print("score  "+str(coup1[1]))
                 return coup1[0]
             depth += 1
 
-        # self._nbtimewasted+=1
-
-        # if coup2 is not None:
-        #     if coup2[1] >= coup1[1]:
-        #         coup2 = coup1
-        # # print("time it takes to choose a move = ",(time.time() - startTime))
-        # print("chosing move of score " + str(coup1[1]))
+#alphabeta to call at the end. Returns the first move that can lead to a win
+    def end_alphabeta(self,color, depth,seconds):
+        bestmove = None
+        score = 0
+        currentTime = time.time()
+        for move in self._board.legal_moves():
+            self._board.push(move)
+            res = self.minValue(-600000, 600000,color,depth,seconds, currentTime)
+            if res>0:
+                bestmove=move
+                score = res
+                self._board.pop()
+                break
+            if not bestmove:
+                bestmove = move
+                score = res
+            else:
+                if res > score:
+                    score = res
+                    bestmove = move
+            self._board.pop()
+        if self._ultra_instinct and not self._flex:
+            self._flex = True
+            if res>0:
+                print("Omaewa mo... shindeiru")
+            elif res==0:
+                print("Je peux voir le futur... Nous allons rejouer dans 1 minute")
+            else:
+                print("It was at this moment "+ self.getPlayerName() +" knew... he f***ed up")     
+        return bestmove
         
-
-
+#get a move from an iterative alphabeta strategy. Takes more or less time to think depending of the state of the game
     def getPlayerMove(self):
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
@@ -458,7 +336,7 @@ class myPlayer(PlayerInterface):
             return (move[1],move[2])
         num = moves[0][0]
         (w,b) = self._board.get_nb_pieces()
-        if w+b<87:
+        if w+b<88:
             for x in range(2):
                 for y in range(2):
                     move = [num,x*(self._board._boardsize-1),y*(self._board._boardsize-1)]
@@ -470,15 +348,11 @@ class myPlayer(PlayerInterface):
             if not self._ultra_instinct:
                 self._ultra_instinct = True
                 print("this is it, i go full ultra instinct")
-            move = self.alphabeta(self._mycolor,15,1000)[0]
+            move = self.end_alphabeta(self._mycolor,15,1000)
         elif w+b>64:
             move = self.alphabetait(self._mycolor,20)
         elif w+b>44:
-        #    if (time.time() - self._mytime) / self._nbmoves < 12 :
             move = self.alphabetait(self._mycolor,15)
-        #    else:
-        #        print("no time to think !!")
-        #        move = self.alphabeta(self._mycolor,3)
         elif w+b>24:
             move = self.alphabetait(self._mycolor,12)
         else:
@@ -487,17 +361,18 @@ class myPlayer(PlayerInterface):
         self._nbmoves += 1
         (c,x,y) = move
         assert(c==self._mycolor)
-        self._mytime += time.time() - currentTime
         return (x,y) 
 
-    
+ #play the opponent move on our own board   
     def playOpponentMove(self, x,y):
         self._board.push([self._opponent, x, y])
 
+#sets our color and our opponent's
     def newGame(self, color):
         self._mycolor = color
         self._opponent = 1 if color == 2 else 2
 
+#print a little message at the end of the game. Also print the number of turn where time is wasted
     def endGame(self, winner):
         if self._mycolor == winner:
             print("Ha, that was easy ^^")
