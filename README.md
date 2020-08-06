@@ -114,7 +114,7 @@ $ pip3 install pygame
 **Pourtier Jacques**
 - Github: [@Exjp](https://github.com/Exjp)
 
-	**Antri Sofian**
+**Antri Sofian**
 - Github: [@Kronenby](https://github.com/Kronenby)
 
 - [MIT license](https://github.com/Exjp/AI_Othello/blob/master/LICENSE)<br/>
