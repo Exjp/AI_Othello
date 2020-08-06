@@ -1,8 +1,6 @@
-				----------PROJET REVERSI----------
-				---UE INTELLIGENCE ARTIFICIELLE---
-				----------------G5----------------
-				-----------Sofian ANTRI-----------
-				---------Jacques POURTIER---------
+# Projet Reversi
+
+## Description
 
 Cette archive contient les fichiers DisplayBoard.py, humanPlayer.py, localGame.py, mylocalGame.py,
  myPlayer.py, myPlayerv0.py, PlayerInterface.py, RandomPlayer.py, Reversi.py et enfin ce readme.
@@ -46,11 +44,10 @@ PlayerInterface contient les fonctions de notre I.A. à appeler depuis un autre 
 
 RandomPlayer contient le joueur aléatoire.
 
-Reversi contient la gloabilité du jeu.
+Reversi contient la globailité du jeu.
 
 
-
-				------------Stratégie-------------
+## Stratégie
 
 
 Pour ce qui est de la stratégie, nous avons utilisé une version itérative de l'approche alphabeta, 
@@ -89,3 +86,36 @@ Nous n'avons pas joué sur la mobilité. Une IA utilisant l'iterativité peut vo
 peu de mobilité, et de manière générale, avoir beaucoup de mobilité est aussi un avantage. Etant 
 donné le temps limite sur une partie, nous avons préféré économiser du temps plutôt que de faire des 
 calculs sur la mobilité.
+
+## Installation
+### Clone
+Clone this repository to your local machine 
+```shell
+$ git clone https://github.com/Exjp/AI_Othello
+```
+### Setup
+Check the version of Python 3 that is installed in the system by typing: 
+```shell
+$ sudo apt-get -y upgrade
+$ python3 -V
+```
+To manage software packages for Python and download pygame, let’s install pip
+```shell
+$ sudo apt-get install -y python3-pip
+```
+Download pygame
+```shell
+$ pip3 install pygame
+```
+
+
+## Auteurs
+
+	**Pourtier Jacques**
+- Github: [@Exjp](https://github.com/Exjp)
+
+	**Antri Sofian**
+- Github: [@Kronenby](https://github.com/Kronenby)
+
+- [MIT license](https://github.com/Exjp/AI_Othello/blob/master/LICENSE)<br/>
+- Copyright © 2019 [Exjp](https://github.com/Exjp)
