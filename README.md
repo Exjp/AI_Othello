@@ -111,7 +111,7 @@ $ pip3 install pygame
 
 ## Auteurs
 
-	**Pourtier Jacques**
+**Pourtier Jacques**
 - Github: [@Exjp](https://github.com/Exjp)
 
 	**Antri Sofian**
